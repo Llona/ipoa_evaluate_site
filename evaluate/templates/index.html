@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>evaluate首頁</title>
+</head>
+<body>
+    {% load tz %}
+    <h2>評價功能列表</h2>
+    {% if request.user.is_authenticated %}
+        <p>{{request.user}} 您已經登入囉</p>
+        <table style='white-space: pre-line;' border="1">
+            <tr>
+                <td><a href="/non_evaluate_article/"><b>未評價文章列表</b></a></td>
+                <td><a href="/all_evaluate_article/"><b>所有文章列表</b></a></td>
+                <td><a href="/all_evaluate_reply/"><b>所有回文列表</b></a></td>
+                <td><a href="/all_no_evaluate_reply/"><b>未評價回文列表</b></a></td>
+            </tr>
+        </table>
+    {% else %}
+        <p>您尚未登入喔~<a href="/accounts/login/">登入</a></p>
+    {% endif %}
+</body>
+</html>

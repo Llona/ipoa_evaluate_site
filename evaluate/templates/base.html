@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+
+{% load i18n %}
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %} {% endblock %}</title>
+    <!-- Bootstrap -->
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    {% block link %} {% endblock %}
+    <style type="text/css">
+    .dcolor {
+        color:#3A454F;
+    }
+    .lcolor {
+        color:#F9F9F9;
+    }
+    .btn-primary {
+        background-color:#043D8C;
+        color:#F9F9F9;
+        border-color:#14325C;
+    }
+    .btn-danger {
+        background-color:#8A140E;
+        color:#F9F9F9;
+        border-color:#8A140E;
+    }
+    .panel-primary .panel-heading{
+        background-color:#14325C;
+        color:#F9F9F9;
+    }
+    .panel-primary{
+        border-color:#14325C;
+    }
+    .panel-body {
+        word-break:break-all;
+    }
+    {% block style %} {% endblock %}
+    </style>
+</head>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>回文列表</title>
+</head>
+<body>
+    {% load tz %}
+    {% load evaluate_extras %}
+    <table style='white-space: pre-line;' border="1">
+        {% for i in reply_list %}
+        <tr>
+            <td>{{ i.reply_time|timezone:"Asia/Taipei" }}
+                <a href="{{ url|append_str:offset|append_str:page_symbol|append_str:i.page }}"><b>連結</b></a>
+            </td>
+            <td><textarea style="font-size:19px;width:500px;height:100px;">{{ i.content }}</textarea>
+            </td>
+            <td>{{ i.evaluate }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

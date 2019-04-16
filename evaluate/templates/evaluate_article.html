@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文章列表</title>
+</head>
+<body>
+    {% load tz %}
+    <table style='white-space: pre-line;' border="1">
+        {% for i in article_list %}
+        <tr>
+            <td><a href="{{ url|add:i.article_id }}">{{ i.title }}</a>
+                <small>{{ i.last_reply_time|timezone:"Asia/Taipei" }}</small>
+                <hr align=left noshade width="50%">
+                <a href="/non_evaluate_reply/{{ i.article_id }}/"><b>留言串</b></a>
+            </td>
+            <td><textarea style="font-size:19px;width:500px;height:100px;">{{ i.content }}</textarea></td>
+            <td>{{ i.evaluate }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
