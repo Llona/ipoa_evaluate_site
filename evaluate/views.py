@@ -1,65 +1,74 @@
 from django.shortcuts import render
-from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
-from django.template import RequestContext
+from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from pymongo import MongoClient
-
+from datetime import datetime
 
 ITEM_OF_ONE_PAGE = 10
 PAGE_PRE_RANGE = 3
 PAGE_NEXT_RANGE = 3
 db_client = MongoClient()
 
+redirect_url = ""
 
 @login_required
 def index(request):
-    return render_to_response('index.html', locals())
+    return render(request, 'index.html', locals())
 
 
 @login_required
-def non_evaluate_article(request):
-    url = r'https://forum.u-car.com.tw/forum/thread/'
-    # myquery = {"evaluate": {"$ne": None}}
-    myquery = {"evaluate": None}
-    article_list = db_client.data_car['ucar_article'].find(myquery)
-    return render_to_response('evaluate_article.html', locals())
+def evaluate_article(request):
+    global redirect_url
+    if request.method == 'POST' and 'renew_all_item' in request.POST:
+        # temp_text = '<br>watch_watch_state_ori:%s, watch_watch_state:%s</br>' % (str(watch_watch_state_ori), str(watch_watch_state))
+        # text = text + temp_text
+        # temp_text = ''
+        text = []
+        select_num = []
+        count = 1
+        while count <= int(request.POST['len_of_count']):
+            evaluate_val = request.POST.get(str('evaluate_%s' % count))
+            article_id = request.POST.get(str('article_id_%s' % count))
+            username = request.user.username
+            article_db = db_client.data_car['ucar_article']
+
+            if evaluate_val:
+                article_db.update({"article_id": article_id},
+                                  {"$set": {"evaluate": int(evaluate_val),
+                                            "evaluate_date": datetime.utcnow(),
+                                            "evaluate_author": username}})
+            select_num.append(evaluate_val)
+
+            count += 1
+        return HttpResponseRedirect('/evaluate_article/?redirect_offset=%s' % redirect_url)
+    else:
+        url = r'https://forum.u-car.com.tw/forum/thread/'
+        myquery = {}
+        if request.method == 'GET' and 'redirect_offset' in request.GET:
+            redirect_url = request.GET['redirect_offset']
+            if redirect_url == 'non_evaluate_article':
+                myquery = {"evaluate": None}
+
+        article_list = db_client.data_car['ucar_article'].find(myquery)
+        return render(request, 'evaluate_article.html', locals())
+        # return render(request, 'test.html', locals())
 
 
 @login_required
-def non_evaluate_reply(request, offset):
+def evaluate_reply(request, offset=None):
+    myquery = {}
+    if request.method == 'GET' and 'redirect_offset' in request.GET:
+        redirect_url = request.GET['redirect_offset']
+        if redirect_url == 'non_evaluate_reply':
+            myquery = {"evaluate": None}
     url = r'https://forum.u-car.com.tw/forum/thread/'
     page_symbol = '/?page='
-    myquery = {"parent_article": str(offset), "evaluate": None}
+    myquery = {"evaluate": None}
     reply_list = db_client.data_car['ucar_reply'].find(myquery)
 
-    return render_to_response('evaluate_reply.html', locals())
-
-
-@login_required
-def all_evaluate_article(request):
-    url = r'https://forum.u-car.com.tw/forum/thread/'
-    article_list = db_client.data_car['ucar_article'].find()
-    return render_to_response('evaluate_article.html', locals())
-
-
-@login_required
-def all_evaluate_reply(request, offset=None):
-    url = r'https://forum.u-car.com.tw/forum/thread/'
-    page_symbol = '/?page='
-    reply_list = db_client.data_car['ucar_reply'].find()
-
-    return render_to_response('evaluate_reply.html', locals())
-
-
-@login_required
-def all_no_evaluate_reply(request, offset=None):
-    url = r'https://forum.u-car.com.tw/forum/thread/'
-    page_symbol = '/?page='
-    myquery = {"evaluate": None}
-    reply_list = db_client.data_car['ucar_reply'].find(myquery)
-
-    return render_to_response('evaluate_reply.html', locals())
+    return render(request, 'evaluate_reply.html', locals())
+    # return render(request, 'test.html', locals())
 
 
 def page_segmented(model_obj, current_page, item_num_of_one_page):
@@ -96,4 +105,47 @@ def page_segmented(model_obj, current_page, item_num_of_one_page):
 
     return one_page_data, tuple(tmp_page_range), pages
 
+#
+# @login_required
+# def non_evaluate_article(request):
+#     url = r'https://forum.u-car.com.tw/forum/thread/'
+#     # myquery = {"evaluate": {"$ne": None}}
+#     myquery = {"evaluate": None}
+#     article_list = db_client.data_car['ucar_article'].find(myquery)
+#     return render(request, 'evaluate_article.html', locals())
+#
 
+# @login_required
+# def non_evaluate_reply(request, offset):
+#     url = r'https://forum.u-car.com.tw/forum/thread/'
+#     page_symbol = '/?page='
+#     myquery = {"parent_article": str(offset), "evaluate": None}
+#     reply_list = db_client.data_car['ucar_reply'].find(myquery)
+#
+#     return render(request, 'evaluate_reply.html', locals())
+#
+#
+# @login_required
+# def all_evaluate_article(request):
+#     url = r'https://forum.u-car.com.tw/forum/thread/'
+#     article_list = db_client.data_car['ucar_article'].find()
+#     return render(request, 'evaluate_article.html', locals())
+#
+#
+# @login_required
+# def all_evaluate_reply(request, offset=None):
+#     url = r'https://forum.u-car.com.tw/forum/thread/'
+#     page_symbol = '/?page='
+#     reply_list = db_client.data_car['ucar_reply'].find()
+#
+#     return render(request, 'evaluate_reply.html', locals())
+#
+#
+# @login_required
+# def all_no_evaluate_reply(request, offset=None):
+#     url = r'https://forum.u-car.com.tw/forum/thread/'
+#     page_symbol = '/?page='
+#     myquery = {"evaluate": None}
+#     reply_list = db_client.data_car['ucar_reply'].find(myquery)
+#
+#     return render(request, 'evaluate_reply.html', locals())

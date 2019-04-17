@@ -6,19 +6,29 @@
 </head>
 <body>
     {% load tz %}
-    <h2>評價功能列表</h2>
+    <h2 align='center' >文章評價系統</h2>
     {% if request.user.is_authenticated %}
-        <p>{{request.user}} 您已經登入囉</p>
-        <table style='white-space: pre-line;' border="1">
-            <tr>
-                <td><a href="/non_evaluate_article/"><b>未評價文章列表</b></a></td>
-                <td><a href="/all_evaluate_article/"><b>所有文章列表</b></a></td>
-                <td><a href="/all_evaluate_reply/"><b>所有回文列表</b></a></td>
-                <td><a href="/all_no_evaluate_reply/"><b>未評價回文列表</b></a></td>
-            </tr>
-        </table>
-    {% else %}
-        <p>您尚未登入喔~<a href="/accounts/login/">登入</a></p>
-    {% endif %}
+        <p align='center'>{{request.user}} 您已經登入囉</p>
+        <form action="/evaluate_article/" method="get">
+            {% csrf_token %}
+            <table align='center' style='white-space: pre-line;' border="1">
+                <tr>
+                    <td><button type="submit" name="redirect_offset" value="non_evaluate_article">未評價文章列表</button></td>
+                    <td><button type="submit" name="redirect_offset" value="all_evaluate_article">所有文章列表</button></td>
+                </tr>
+            </table>
+        </form>
+        <form action="/evaluate_reply/" method="get">
+            {% csrf_token %}
+            <table align='center' style='white-space: pre-line;' border="1">
+                <tr>
+                    <td><button type="submit" name="redirect_offset" value="non_evaluate_reply">未評價回文列表</button></td>
+                    <td><button type="submit" name="redirect_offset" value="all_evaluate_reply">所有回文列表</button></td>
+                </tr>
+            </table>
+        </form>
+        {% else %}
+            <p>您尚未登入喔~<a href="/accounts/login/">登入</a></p>
+        {% endif %}
 </body>
 </html>

@@ -17,16 +17,20 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.auth.views import login
 from account.views import logout
-from evaluate.views import index, non_evaluate_article, non_evaluate_reply, all_evaluate_article, all_evaluate_reply, \
-    all_no_evaluate_reply
+from evaluate.views import index, evaluate_article, evaluate_reply
+    # non_evaluate_article, non_evaluate_reply, all_evaluate_article, all_evaluate_reply, all_no_evaluate_reply
 
 
 urlpatterns = [
-    url(r'^non_evaluate_article/$', non_evaluate_article),
-    url(r'^non_evaluate_reply/(\d+)/$', non_evaluate_reply),
-    url(r'^all_evaluate_article/$', all_evaluate_article),
-    url(r'^all_evaluate_reply/$', all_evaluate_reply),
-    url(r'^all_no_evaluate_reply/$', all_no_evaluate_reply),
+    url(r'^evaluate_article/$', evaluate_article),
+    url(r'^evaluate_reply/$', evaluate_reply),
+
+    # url(r'^non_evaluate_article/$', non_evaluate_reply),
+    # url(r'^non_evaluate_reply/(\d+)/$', non_evaluate_reply),
+    # url(r'^all_evaluate_article/$', all_evaluate_article),
+    # url(r'^all_evaluate_reply/$', all_evaluate_reply),
+    # url(r'^all_no_evaluate_reply/$', all_no_evaluate_reply),
+
     url(r'^$', index),
     url(r'^accounts/login/$', login, name='login'),
     # url(r'^accounts/logout/$', logout),
