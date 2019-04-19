@@ -21,11 +21,6 @@ def index(request):
 def evaluate_article(request):
     global redirect_url
     if request.method == 'POST' and 'renew_all_item' in request.POST:
-        # temp_text = '<br>watch_watch_state_ori:%s, watch_watch_state:%s</br>' % (str(watch_watch_state_ori), str(watch_watch_state))
-        # text = text + temp_text
-        # temp_text = ''
-        text = []
-        select_num = []
         count = 1
         while count <= int(request.POST['len_of_count']):
             evaluate_val = request.POST.get(str('evaluate_%s' % count))
@@ -38,8 +33,6 @@ def evaluate_article(request):
                                   {"$set": {"evaluate": int(evaluate_val),
                                             "evaluate_date": datetime.utcnow(),
                                             "evaluate_author": username}})
-            select_num.append(evaluate_val)
-
             count += 1
         return HttpResponseRedirect('/evaluate_article/?redirect_offset=%s' % redirect_url)
     else:
@@ -51,25 +44,78 @@ def evaluate_article(request):
                 myquery = {"evaluate": None}
 
         article_list = db_client.data_car['ucar_article'].find(myquery)
+
+        # pages
+        current_page = request.GET.get("page", 1)
+        current_page_data, page_range, pages_h = page_segmented(article_list, current_page, ITEM_OF_ONE_PAGE)
+
         return render(request, 'evaluate_article.html', locals())
-        # return render(request, 'test.html', locals())
 
 
 @login_required
-def evaluate_reply(request, offset=None):
-    myquery = {}
-    if request.method == 'GET' and 'redirect_offset' in request.GET:
-        redirect_url = request.GET['redirect_offset']
-        if redirect_url == 'non_evaluate_reply':
-            myquery = {"evaluate": None}
-    url = r'https://forum.u-car.com.tw/forum/thread/'
-    page_symbol = '/?page='
-    myquery = {"evaluate": None}
-    reply_list = db_client.data_car['ucar_reply'].find(myquery)
+def evaluate_reply(request, offset):
+    # global redirect_url
+    if request.method == 'POST' and 'renew_all_item' in request.POST:
+        count = 1
+        while count <= int(request.POST['len_of_count']):
+            evaluate_val = request.POST.get(str('evaluate_%s' % count))
+            reply_id = request.POST.get(str('reply_id_%s' % count))
+            username = request.user.username
+            reply_db = db_client.data_car['ucar_reply']
 
-    return render(request, 'evaluate_reply.html', locals())
-    # return render(request, 'test.html', locals())
+            if evaluate_val:
+                reply_db.update({"reply_id": reply_id},
+                                  {"$set": {"evaluate": int(evaluate_val),
+                                            "evaluate_date": datetime.utcnow(),
+                                            "evaluate_author": username}})
+            count += 1
+        return HttpResponseRedirect(request.get_full_path())
+    else:
+        url = r'https://forum.u-car.com.tw/forum/thread/'
+        page_symbol = '/?page='
+        myquery = {"parent_article": str(offset)}
 
+        reply_list = db_client.data_car['ucar_reply'].find(myquery)
+        # pages
+        current_page = request.GET.get("page", 1)
+        current_page_data, page_range, pages_h = page_segmented(reply_list, current_page, ITEM_OF_ONE_PAGE)
+
+        return render(request, 'evaluate_reply.html', locals())
+
+
+def all_evaluate_reply(request):
+    global redirect_url
+    if request.method == 'POST' and 'renew_all_item' in request.POST:
+        count = 1
+        while count <= int(request.POST['len_of_count']):
+            evaluate_val = request.POST.get(str('evaluate_%s' % count))
+            reply_id = request.POST.get(str('reply_id_%s' % count))
+            username = request.user.username
+            reply_db = db_client.data_car['ucar_reply']
+
+            if evaluate_val:
+                reply_db.update({"reply_id": reply_id},
+                                  {"$set": {"evaluate": int(evaluate_val),
+                                            "evaluate_date": datetime.utcnow(),
+                                            "evaluate_author": username}})
+            count += 1
+        return HttpResponseRedirect(request.get_full_path())
+    else:
+        url = r'https://forum.u-car.com.tw/forum/thread/'
+        page_symbol = '/?page='
+        myquery = {}
+
+        if request.method == 'GET' and 'redirect_offset' in request.GET:
+            redirect_url = request.GET['redirect_offset']
+            if redirect_url == 'non_evaluate_reply':
+                myquery = {"evaluate": None}
+
+        reply_list = db_client.data_car['ucar_reply'].find(myquery)
+        # pages
+        current_page = request.GET.get("page", 1)
+        current_page_data, page_range, pages_h = page_segmented(reply_list, current_page, ITEM_OF_ONE_PAGE)
+
+        return render(request, 'evaluate_reply.html', locals())
 
 def page_segmented(model_obj, current_page, item_num_of_one_page):
     pages = Paginator(model_obj, item_num_of_one_page)  # get all page

@@ -1,19 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-    <title>文章列表</title>
-                    <style type="text/css">
-.NoNewline
-{
-word-break: keep-all;/*必須*/
-}
-</style>
 <head>
-    <meta charset="UTF-8">
-
+    <meta charset="UTF-8" >
+	<title>文章列表</title>
 </head>
-
 <body>
     {% load tz %}
+    <div align="center">
+        {% include 'pages.html' %}
+        <br>
+    </div>
     <form action="" method="post">
         {% csrf_token %}
         <table align='center' border="1" style="word-break:break-all; word-wrap:break-all;">
@@ -27,17 +23,17 @@ word-break: keep-all;/*必須*/
                     <a href="{{ url|add:i.article_id }}">{{ i.title }}</a><br>
                     <small>{{ i.last_reply_time|timezone:"Asia/Taipei" }}</small>
                     <hr align=left noshade width="70%">
-                    <a href="/non_evaluate_reply/{{ i.article_id }}/"><b style="font-size:19px;">留言串</b></a>
+                    <a href="/evaluate_reply/{{ i.article_id }}/"><b style="font-size:19px;">評價回文串</b></a>
                 </td>
                 <td><textarea style="font-size:18px;width:700px;height:200px;">{{ i.content }}</textarea></td>
                 <td>
                     {% ifequal i.evaluate 1 %}
-                    <input type="radio" name="evaluate_{{ forloop.counter }}" value=1 checked=checked>正面
-                    <input type="radio" name="evaluate_{{ forloop.counter }}" value=2>負面
+                    <input type="radio" name="evaluate_{{ forloop.counter }}" value=1 checked=checked>正面<br>
+                    <input type="radio" name="evaluate_{{ forloop.counter }}" value=2>負面<br>
                     {% else %}
                         {% ifequal i.evaluate 2 %}
-                        <input type="radio" name="evaluate_{{ forloop.counter }}" value=1>正面
-                        <input type="radio" name="evaluate_{{ forloop.counter }}" value=2 checked=checked>負面
+                        <input type="radio" name="evaluate_{{ forloop.counter }}" value=1>正面<br>
+                        <input type="radio" name="evaluate_{{ forloop.counter }}" value=2 checked=checked>負面<br>
                         {% else %}
                         <input type="radio" style="padding:1px;" name="evaluate_{{ forloop.counter }}" value=1>正面<br>
                         <input type="radio" style="padding:1px;" name="evaluate_{{ forloop.counter }}" value=2>負面<br>
@@ -51,5 +47,10 @@ word-break: keep-all;/*必須*/
             {% endfor %}
         </table>
     </form>
+    <div align="center">
+        <br>
+        {% include 'pages.html' %}
+        <br><br>
+    </div>
 </body>
 </html>

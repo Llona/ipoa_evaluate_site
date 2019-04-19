@@ -8,7 +8,8 @@
     {% load tz %}
     <h2 align='center' >文章評價系統</h2>
     {% if request.user.is_authenticated %}
-        <p align='center'>{{request.user}} 您已經登入囉</p>
+    <p align='center'>HI! {{request.user}}, 您已經登入囉, 乖乖的上工吧 XD</p>
+    <p align='center'><a href="/accounts/logout/">不~~~我要登出 @@</a></p>
         <form action="/evaluate_article/" method="get">
             {% csrf_token %}
             <table align='center' style='white-space: pre-line;' border="1">
