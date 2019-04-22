@@ -1,0 +1,68 @@
+<style>
+    /* Pagination links */
+    .pagination a {
+      color: black;
+      padding: 8px 16px;
+      text-decoration: none;
+      transition: background-color .3s;
+    }
+
+    /* Style the active/current link */
+    .pagination a.active {
+      background-color: dodgerblue;
+      color: white;
+    }
+
+    /* Add a grey background color on mouse-over */
+    .pagination a:hover:not(.active) {background-color: #ddd;}
+</style>
+
+<br>共 {{pages_h.count}} 個項目 ， 目前第 {{current_page_data.number}} 頁 ， 共 {{pages_h.num_pages}} 頁<br><br>
+
+<div class="pagination">
+    <a href="/index/">回首頁&nbsp;&nbsp;</a>
+    {% ifnotequal page_range|first 1 %}
+        <a href="?page=1" aria-label="Previous"><span aria-hidden="true">&laquo;&laquo;</span></a>
+    {% endifnotequal %}
+    {% if current_page_data.has_previous %}
+        <a href="?page={{current_page_data.previous_page_number}}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+    {% endif %}
+        {% for page in page_range %}
+            {% ifequal  page current_page_data.number %}
+                <a class="active" href="?page={{page}}">{{page}}</a>
+            {% else %}
+                <a href="?page={{page}}">{{page}}</a>
+            {% endifequal %}
+        {% endfor %}
+    {% if current_page_data.has_next %}
+        <a href="?page={{current_page_data.next_page_number}}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+    {% endif %}
+    {% ifnotequal page_range|last pages_h.num_pages %}
+        <a href="?page={{pages_h.num_pages}}" aria-label="Next"><span aria-hidden="true">&raquo;&raquo;</span></a>
+    {% endifnotequal %}
+    <a href="/index/">&nbsp;&nbsp;回首頁</a>
+</div>
+
+<!--<div class="visible-xs">-->
+    <!--<ul class="pagination pagination-sm">-->
+        <!--{% if current_page_data.has_previous %}-->
+            <!--<li><a href="?page=1&sort={{sort_str}}" aria-label="Previous"><span aria-hidden="true">&laquo;&laquo;</span></a></li>-->
+        <!--{% endif %}-->
+        <!--{% if current_page_data.has_previous %}-->
+            <!--<li><a href="?page={{current_page_data.previous_page_number}}&sort={{sort_str}}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>-->
+        <!--{% endif %}-->
+
+        <!--{% for page in page_range %}-->
+            <!--{% ifequal page current_page_data.number %}-->
+            <!--<li><a class="active" href="?page={{page}}&sort={{sort_str}}">{{page}}</a></li>-->
+            <!--{% endifequal %}-->
+        <!--{% endfor %}-->
+
+        <!--{% if current_page_data.has_next %}-->
+            <!--<li><a href="?page={{current_page_data.next_page_number}}&sort={{sort_str}}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>-->
+        <!--{% endif %}-->
+        <!--{% if current_page_data.has_next %}-->
+            <!--<li><a href="?page={{pages_h.num_pages}}&sort={{sort_str}}" aria-label="Next"><span aria-hidden="true">&raquo;&raquo;</span></a></li>-->
+        <!--{% endif %}-->
+    <!--</ul>-->
+<!--</div>-->
